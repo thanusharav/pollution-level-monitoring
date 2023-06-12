@@ -1,1 +1,77 @@
+PROGRAM //to detect pollution level
+#include<LiquidCrystal.h>
+#include <SoftwareSerial.h>
+int mq5=A0;
+int buz=13;
+int red=6;
+int green=7;
+int blue=8;
+int rel=10;
+int a;
+float p;
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+void setup()
+{
+Serial.begin(9600);   // Initialise Serial Communication with the Serial Monitor
+pinMode(rel,OUTPUT);
+pinMode(buz,OUTPUT);
+pinMode(red,OUTPUT);
+pinMode(green,OUTPUT);
+pinMode(blue,OUTPUT);
+digitalWrite(rel,LOW);
+digitalWrite(buz,LOW);
+digitalWrite(red,LOW);
+digitalWrite(green,LOW);
+digitalWrite(blue,LOW);
+digitalWrite(blue,HIGH);
+lcd.begin(20,4);
+lcd.setCursor(0, 0);
+lcd.setCursor(5, 0);
+lcd.print("SENSOR");
+lcd.setCursor(0, 1);
+lcd.print("READY TO SENSE");
+delay(2000);
+}
+void loop()
+{
+a=analogRead(mq5);
+lcd.setCursor(0,0);
+lcd.print("POLLUTION LEVEL");
+if(a<60)
+{
+p=0;
+}
+else
+{
+p=(a-35)/9.64;
+}
+lcd.setCursor(0,1);
+lcd.print(" Value- ");
+lcd.setCursor(8,1);
+lcd.print(p);
+Serial.println(p);
+lcd.setCursor(12,1);
+lcd.print("%");
+if(p>=50) // THRESHOLD LIMIT
+{
+Serial.println("Dangerous Air");
+digitalWrite(buz,HIGH);
+digitalWrite(blue,LOW);
+digitalWrite(red,HIGH);
+digitalWrite(rel,HIGH);
+lcd.setCursor(0,2);
+lcd.print("Dangerous Air");
+Serial.println("Dangerous Air");
+Serial.println("*Warning");
+delay(1000);
+}
+else
+{
+delay(500);
+digitalWrite(buz,LOW);
+lcd.clear();
+}
+}
 
